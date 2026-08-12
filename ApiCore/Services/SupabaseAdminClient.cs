@@ -24,7 +24,7 @@ namespace ApiCore.Services
             }
         }
 
-        public async Task<Dictionary<string, object>?> CreateUserAsync(string email, string password, string phone = null)
+        public async Task<Dictionary<string, object>?> CreateUserAsync(string email, string password, string? phone = null)
         {
             var payload = new Dictionary<string, object>
             {

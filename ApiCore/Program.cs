@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using System;
+using ApiCore.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -77,8 +78,6 @@ namespace ApiCore
                 });
             });
 
-            var app = builder.Build();
-
             // Register HTTP client for Supabase admin interactions
             builder.Services.AddHttpClient<ISupabaseAdminClient, SupabaseAdminClient>(client =>
             {
@@ -88,6 +87,8 @@ namespace ApiCore
 
             // Register Auth services
             builder.Services.AddScoped<IAuthService, AuthService>();
+
+            var app = builder.Build();
 
 
             // Middleware: habilitar Swagger siempre y exponer UI en la raíz
