@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using ApiCore.Controllers.Models;
-using ApiCore.Core.Interfaces;
+using ApiCore.Application.DTOs;
+using ApiCore.Application.Interfaces;
 
 namespace ApiCore.Controllers
 {

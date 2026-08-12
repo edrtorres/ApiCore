@@ -81,14 +81,14 @@ namespace ApiCore
             });
 
             // Register HTTP client for Supabase admin interactions (Infrastructure)
-            builder.Services.AddHttpClient<ApiCore.Core.Interfaces.ISupabaseClient, ApiCore.Infrastructure.SupabaseAdminClient>(client =>
+            builder.Services.AddHttpClient<ApiCore.Application.Interfaces.ISupabaseClient, ApiCore.Infrastructure.SupabaseAdminClient>(client =>
             {
                 var url = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? "";
                 if (!string.IsNullOrEmpty(url)) client.BaseAddress = new Uri(url);
             });
 
             // Register Auth services (UseCases)
-            builder.Services.AddScoped<ApiCore.Core.Interfaces.IAuthService, ApiCore.UseCases.AuthService>();
+            builder.Services.AddScoped<ApiCore.Application.Interfaces.IAuthService, ApiCore.Application.UseCases.AuthService>();
 
             var app = builder.Build();
 
