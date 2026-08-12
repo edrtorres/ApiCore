@@ -1,0 +1,74 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi;
+using System;
+
+
+namespace ApiCore
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // Configuración de puertos para Railway (Nube) y Local
+            var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+            // Forzar la variable de entorno para que Kestrel no intente bindear a 127.0.0.1
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", $"http://0.0.0.0:{port}");
+
+            // Configurar Kestrel para escuchar en Any IP usando el puerto proporcionado por el entorno.
+            if (int.TryParse(port, out var p))
+            {
+                builder.WebHost.ConfigureKestrel(options =>
+                {
+                    options.ListenAnyIP(p);
+                });
+            }
+            else
+            {
+                builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+            }
+
+            // Agregar servicios
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            
+            // --- Configuración Swagger detallada ---
+            // Incluir SHA corto en el título para verificar despliegues
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCore (deploy: ecf77a8)", Version = "v1" });
+            });
+
+            // Configuración CORS (Importante para Railway)
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
+            var app = builder.Build();
+
+
+            // Middleware: habilitar Swagger siempre y exponer UI en la raíz
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiCore v1");
+                c.RoutePrefix = string.Empty; // servir la UI en /
+            });
+
+            app.UseCors("AllowAll");
+            app.UseAuthorization();
+            app.MapControllers();
+
+            app.Run();
+        }
+    }
+}
