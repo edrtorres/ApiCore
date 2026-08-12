@@ -3,6 +3,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi;
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using ApiCore.Swagger;
 
 
 namespace ApiCore
@@ -34,13 +40,31 @@ namespace ApiCore
             // Agregar servicios
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            
+
+            // --- API Versioning ---
+            builder.Services.AddApiVersioning(options =>
+            {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new UrlSegmentApiVersionReader(),
+                    new HeaderApiVersionReader("x-api-version"),
+                    new QueryStringApiVersionReader("api-version")
+                );
+            });
+
+            // Expose versioned API explorer for Swagger
+            builder.Services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;
+            });
+
             // --- Configuración Swagger detallada ---
             // Incluir SHA corto en el título para verificar despliegues
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCore (deploy: ecf77a8)", Version = "v1" });
-            });
+            builder.Services.AddSwaggerGen();
+            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
             // Configuración CORS (Importante para Railway)
             builder.Services.AddCors(options =>
@@ -57,10 +81,14 @@ namespace ApiCore
 
 
             // Middleware: habilitar Swagger siempre y exponer UI en la raíz
+            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiCore v1");
+                foreach (var description in provider.ApiVersionDescriptions)
+                {
+                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"ApiCore {description.GroupName}");
+                }
                 c.RoutePrefix = string.Empty; // servir la UI en /
             });
 
