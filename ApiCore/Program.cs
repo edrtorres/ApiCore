@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using ApiCore.Swagger;
 
 
 namespace ApiCore
@@ -63,8 +61,10 @@ namespace ApiCore
 
             // --- Configuración Swagger detallada ---
             // Incluir SHA corto en el título para verificar despliegues
-            builder.Services.AddSwaggerGen();
-            builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCore (deploy: ecf77a8)", Version = "v1" });
+            });
 
             // Configuración CORS (Importante para Railway)
             builder.Services.AddCors(options =>
