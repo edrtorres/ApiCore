@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using ApiCore.Controllers.Models;
+using ApiCore.Application.DTOs;
 
-namespace ApiCore.Core.Interfaces
+namespace ApiCore.Application.Interfaces
 {
     public interface IAuthService
     {

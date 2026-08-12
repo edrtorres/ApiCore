@@ -5,8 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
-using ApiCore.Core.Interfaces;
+using ApiCore.Application.Interfaces;
 
 namespace ApiCore.Infrastructure
 {

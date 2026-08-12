@@ -13,4 +13,10 @@
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ApiCore.Domain\ApiCore.Domain.csproj" />
+    <ProjectReference Include="..\ApiCore.Application\ApiCore.Application.csproj" />
+    <ProjectReference Include="..\ApiCore.Infrastructure\ApiCore.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

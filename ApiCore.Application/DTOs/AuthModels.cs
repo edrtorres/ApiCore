@@ -1,4 +1,4 @@
-namespace ApiCore.Controllers.Models
+namespace ApiCore.Application.DTOs
 {
     public record RegisterRequest(string Email, string Password, string Nombre, string? Phone);
     public record LoginRequest(string Identifier, string Password);

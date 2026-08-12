@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
-using ApiCore.Controllers.Models;
-using ApiCore.Core.Interfaces;
-using System.Threading.Tasks;
+using ApiCore.Application.DTOs;
+using ApiCore.Application.Interfaces;
+using ApiCore.Domain.Entities;
+using System.Collections.Generic;
 
-namespace ApiCore.UseCases
+namespace ApiCore.Application.UseCases
 {
     public class AuthService : IAuthService
     {
@@ -22,7 +23,7 @@ namespace ApiCore.UseCases
                 return new AuthResult(false, "No se pudo crear el usuario");
             }
 
-            var perfil = new ApiCore.Domain.Entities.Perfil
+            var perfil = new Perfil
             {
                 UsuarioId = created.GetValueOrDefault("id")?.ToString(),
                 Nombre = req.Nombre
