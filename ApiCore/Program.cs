@@ -79,6 +79,16 @@ namespace ApiCore
 
             var app = builder.Build();
 
+            // Register HTTP client for Supabase admin interactions
+            builder.Services.AddHttpClient<ISupabaseAdminClient, SupabaseAdminClient>(client =>
+            {
+                var url = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? "";
+                if (!string.IsNullOrEmpty(url)) client.BaseAddress = new Uri(url);
+            });
+
+            // Register Auth services
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
 
             // Middleware: habilitar Swagger siempre y exponer UI en la raíz
             var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
