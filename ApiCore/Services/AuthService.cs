@@ -22,7 +22,11 @@ namespace ApiCore.UseCases
                 return new AuthResult(false, "No se pudo crear el usuario");
             }
 
-            var perfil = new { usuario_id = created.GetValueOrDefault("id"), nombre = req.Nombre };
+            var perfil = new ApiCore.Domain.Entities.Perfil
+            {
+                UsuarioId = created.GetValueOrDefault("id")?.ToString(),
+                Nombre = req.Nombre
+            };
             await _supabase.InsertPerfilAsync(perfil);
 
             return new AuthResult(true, "Usuario creado. Revisa tu correo para confirmar.");
