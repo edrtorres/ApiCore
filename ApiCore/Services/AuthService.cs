@@ -1,13 +1,15 @@
 using System.Threading.Tasks;
 using ApiCore.Controllers.Models;
+using ApiCore.Core.Interfaces;
+using System.Threading.Tasks;
 
-namespace ApiCore.Services
+namespace ApiCore.UseCases
 {
     public class AuthService : IAuthService
     {
-        private readonly ISupabaseAdminClient _supabase;
+        private readonly ISupabaseClient _supabase;
 
-        public AuthService(ISupabaseAdminClient supabase)
+        public AuthService(ISupabaseClient supabase)
         {
             _supabase = supabase;
         }
@@ -17,21 +19,20 @@ namespace ApiCore.Services
             var created = await _supabase.CreateUserAsync(req.Email, req.Password, req.Phone);
             if (created == null)
             {
-                return new AuthResult { Success = false, Message = "No se pudo crear el usuario" };
+                return new AuthResult(false, "No se pudo crear el usuario");
             }
 
-            // Insert perfil (best-effort)
             var perfil = new { usuario_id = created.GetValueOrDefault("id"), nombre = req.Nombre };
             await _supabase.InsertPerfilAsync(perfil);
 
-            return new AuthResult { Success = true, Message = "Usuario creado. Revisa tu correo para confirmar." };
+            return new AuthResult(true, "Usuario creado. Revisa tu correo para confirmar.");
         }
 
         public async Task<AuthResult> LoginAsync(LoginRequest req)
         {
             var token = await _supabase.SignInWithPasswordAsync(req.Identifier, req.Password);
-            if (token == null) return new AuthResult { Success = false, Message = "Credenciales inválidas" };
-            return new AuthResult { Success = true, Message = "Inicio de sesión exitoso", Data = token };
+            if (token == null) return new AuthResult(false, "Credenciales inválidas");
+            return new AuthResult(true, "Inicio de sesión exitoso", token);
         }
 
         public async Task<UserInfo?> MeAsync(string accessToken)

@@ -6,9 +6,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace ApiCore.Services
+using ApiCore.Core.Interfaces;
+
+namespace ApiCore.Infrastructure
 {
-    public class SupabaseAdminClient : ISupabaseAdminClient
+    public class SupabaseAdminClient : ISupabaseClient
     {
         private readonly HttpClient _http;
         private readonly string _serviceKey;

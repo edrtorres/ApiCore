@@ -78,15 +78,15 @@ namespace ApiCore
                 });
             });
 
-            // Register HTTP client for Supabase admin interactions
-            builder.Services.AddHttpClient<ISupabaseAdminClient, SupabaseAdminClient>(client =>
+            // Register HTTP client for Supabase admin interactions (Infrastructure)
+            builder.Services.AddHttpClient<ApiCore.Core.Interfaces.ISupabaseClient, ApiCore.Infrastructure.SupabaseAdminClient>(client =>
             {
                 var url = Environment.GetEnvironmentVariable("SUPABASE_URL") ?? "";
                 if (!string.IsNullOrEmpty(url)) client.BaseAddress = new Uri(url);
             });
 
-            // Register Auth services
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            // Register Auth services (UseCases)
+            builder.Services.AddScoped<ApiCore.Core.Interfaces.IAuthService, ApiCore.UseCases.AuthService>();
 
             var app = builder.Build();
 

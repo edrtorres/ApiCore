@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
-namespace ApiCore.Services
+namespace ApiCore.Core.Interfaces
 {
-    public interface ISupabaseAdminClient
+    public interface ISupabaseClient
     {
         Task<Dictionary<string, object>?> CreateUserAsync(string email, string password, string? phone = null);
         Task<Dictionary<string, object>?> SignInWithPasswordAsync(string emailOrPhone, string password);
